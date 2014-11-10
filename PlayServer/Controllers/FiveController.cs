@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 using System.Web.Http;
 using System.Web.Http.Results;
 using System.Web.Script.Serialization;
@@ -14,37 +15,48 @@ using FivePlay;
 
 namespace PlayServer.Controllers
 {
-    public class FiveController : ApiController
+    public class FiveController : Controller
     {
         private Board BOARD = new Board();
+        private PlayerManager playerManager = new PlayerManager();
 
-        public List<MoveData> PlayFirst()
+        public ActionResult Index()
         {
+            return View();
+        }
+
+        public JsonResult Play()
+        {
+            ResultData result = new ResultData();
+
             // register first player
             //PlayerManager.RegisterPlayer("http://10.148.204.235/Test1/api/test");
-            PlayerManager.RegisterPlayer("localhost");
+            playerManager.RegisterPlayer("Robot1", "localhost");
             // register second player
-            PlayerManager.RegisterPlayer("localhost");
+            playerManager.RegisterPlayer("Robot2", "localhost");
 
-            GoData nextMove = PlayerManager.CurrentPlayer.Play("PLAY_INVITE");
+            GoData nextMove = playerManager.CurrentPlayer.Play("PLAY_INVITE");
             if (nextMove == null ||
                 nextMove.b_x != 0 ||
                 nextMove.b_y != 0)
             {
+                result.Data = BOARD.MoveDatas;
+                result.winner = playerManager.SwitchPlayer().Name;
                 // first player lose
-                return BOARD.MoveDatas;
+                return Json(result, JsonRequestBehavior.AllowGet);
             }
 
             // first move
-            BOARD.Add(nextMove.a_x, nextMove.a_y, PlayerManager.CurrentPlayer.PlayerType);
+            var points = ParsePoints(nextMove);
+            BOARD.Add(points.Item1, points.Item2, playerManager.CurrentPlayer.PlayerType);
 
             GameStatus status = GameStatus.Progressing;
             while (true)
             {
-                nextMove = PlayerManager.SwitchPlayer().Play("PLAY_NORMAL", nextMove);
+                nextMove = playerManager.SwitchPlayer().Play("PLAY_NORMAL", nextMove);
 
-                var points = ParsePoints(nextMove);
-                status = BOARD.Add(points.Item1, points.Item2, PlayerManager.CurrentPlayer.PlayerType);
+                points = ParsePoints(nextMove);
+                status = BOARD.Add(points.Item1, points.Item2, playerManager.CurrentPlayer.PlayerType);
                 if (status == GameStatus.Break_Rules ||
                     status == GameStatus.Win ||
                     status == GameStatus.Tie)
@@ -70,7 +82,11 @@ namespace PlayServer.Controllers
             //    PlayerManager.SwitchPlayer().End("PLAY_END_TIE");
             //}
 
-            return BOARD.MoveDatas;
+
+
+            result.Data = BOARD.MoveDatas;
+            result.winner = playerManager.SwitchPlayer().Name;
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         private Tuple<Point, Point?> ParsePoints(GoData data)

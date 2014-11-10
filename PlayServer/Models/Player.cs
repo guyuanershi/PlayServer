@@ -18,6 +18,8 @@ namespace PlayServer.Models
 
         public String URL { get; set; }
 
+        public String Name { get; set; }
+
         public abstract GoData Play(string status, GoData preMove = null);
 
         public virtual void End(string status)
@@ -49,9 +51,10 @@ namespace PlayServer.Models
 
     public class RealPlayer : Player
     {
-        public RealPlayer(string url, PlayerType playerType)
+        public RealPlayer(string name, string url, PlayerType playerType)
         {
             this.URL = url;
+            this.Name = name;
             this.PlayerType = playerType;
         }
 
@@ -82,11 +85,13 @@ namespace PlayServer.Models
 
     public class RobotPlayer : Player
     {
-        public RobotPlayer(string url, PlayerType playerType)
+        public RobotPlayer(string name, string url, PlayerType playerType)
         {
             this.URL = url;
+            this.Name = name;
             this.PlayerType = playerType;
         }
+
         public override GoData Play(string status, GoData preMove)
         {
             GoData nextMove = new GoData();
@@ -116,39 +121,40 @@ namespace PlayServer.Models
         }
     }
 
-    public static class PlayerManager
+    public class PlayerManager
     {
-        public static Player FirstPlayer { get; set; }
-        public static Player SecondPlayer { get; set; }
+        private Player _firstPlayer;
+        private Player _secondPlayer;
 
-        public static void RegisterPlayer(string url)
+        public void RegisterPlayer(string name, string url)
         {
-            if (FirstPlayer == null)
+            if (_firstPlayer == null)
             {
-                FirstPlayer = CreatePlayer(url, PlayerType.FirstOne);
+                _firstPlayer = CreatePlayer(name, url, PlayerType.FirstOne);
                 // initial current player
-                CurrentPlayer = FirstPlayer;
+                CurrentPlayer = _firstPlayer;
             }
-            else if (SecondPlayer == null)
+            else if (_secondPlayer == null)
             {
-                SecondPlayer = CreatePlayer(url, PlayerType.SecondOne);
+                _secondPlayer = CreatePlayer(name, url, PlayerType.SecondOne);
             }
         }
 
-        private static Player CreatePlayer(string url, PlayerType pt)
+        private Player CreatePlayer(string name, string url, PlayerType pt)
         {
             if (url.Contains("http://"))
-                return new RealPlayer(url, pt);
+                return new RealPlayer(name, url, pt);
             else
-                return new RobotPlayer(url, pt);
+                return new RobotPlayer(name, url, pt);
         }
 
-        public static Player CurrentPlayer { get; set; }
+        public Player CurrentPlayer { get; set; }
 
-        public static Player SwitchPlayer()
+        public Player SwitchPlayer()
         {
-            CurrentPlayer = (CurrentPlayer.PlayerType == PlayerType.FirstOne) ? SecondPlayer : FirstPlayer;
+            CurrentPlayer = (CurrentPlayer.PlayerType == PlayerType.FirstOne) ? _secondPlayer : _firstPlayer;
             return CurrentPlayer;
         }
+
     }
 }

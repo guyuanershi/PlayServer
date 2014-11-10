@@ -145,7 +145,7 @@ namespace FivePlay
             Add(p1.X, p1.Y, player);
 
             // store this move
-            MoveDatas.Add(new MoveData { type = (int)player, x = p1.X, y = p1.Y});
+            MoveDatas.Add(new MoveData { userType = (int)player, x = p1.X, y = p1.Y});
 
             // check win-lose
             status = CheckWinLoseTie(p1.X, p1.Y, player);
@@ -157,7 +157,7 @@ namespace FivePlay
                 Add(p2.Value.X, p2.Value.Y, player);
                 
                 // store this move
-                MoveDatas.Add(new MoveData { type = (int)player, x = p2.Value.X, y = p2.Value.Y });
+                MoveDatas.Add(new MoveData { userType = (int)player, x = p2.Value.X, y = p2.Value.Y });
 
                 // check win-lose
                 status = CheckWinLoseTie(p2.Value.X,p2.Value.Y, player);

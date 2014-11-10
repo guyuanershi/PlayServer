@@ -4,14 +4,12 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
+<script type="text/javascript" src="@Url.Content("~/Scripts/jquery-1.10.2.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.js")"></script>   
 
 <h2>Five</h2>
 
-<form action="/Five/PlayFirst" method="post">
-    <input type="submit" value="PlayFirst" />
-</form>
-
-<form action="/Five/PlaySecond" method="post">
-    <input type="submit" value="PlaySecond" />
-</form>
+@using (Ajax.BeginForm("Play", new AjaxOptions()))
+{
+    <input type="submit" value="play first" />
+}

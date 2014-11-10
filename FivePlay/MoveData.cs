@@ -10,7 +10,7 @@ namespace FivePlay
     {
         // 0: black
         // 1: white
-        public int type { get; set; }
+        public int userType { get; set; }
         public int x { get; set; }
         public int y { get; set; }
     }
