@@ -42,12 +42,16 @@ namespace FivePlay
         // normal board (x,y)
         private List<ChessType> board = new List<ChessType>();
 
+        public List<MoveData> MoveDatas { get; set; }
+
         public Board()
         {
             for (int i = 0; i < BoardSize * BoardSize; i++)
             {
                 board.Add(ChessType.EMPTY);
             }
+
+            MoveDatas = new List<MoveData>();
 
             Rules.Clear();
             Rules.Prepare();
@@ -140,6 +144,9 @@ namespace FivePlay
 
             Add(p1.X, p1.Y, player);
 
+            // store this move
+            MoveDatas.Add(new MoveData { type = (int)player, x = p1.X, y = p1.Y});
+
             // check win-lose
             status = CheckWinLoseTie(p1.X, p1.Y, player);
             if (status != GameStatus.Progressing)
@@ -149,6 +156,9 @@ namespace FivePlay
             {
                 Add(p2.Value.X, p2.Value.Y, player);
                 
+                // store this move
+                MoveDatas.Add(new MoveData { type = (int)player, x = p2.Value.X, y = p2.Value.Y });
+
                 // check win-lose
                 status = CheckWinLoseTie(p2.Value.X,p2.Value.Y, player);
                 if (status != GameStatus.Progressing)
@@ -319,6 +329,8 @@ namespace FivePlay
             {
                 board[i] = ChessType.EMPTY;
             }
+
+            MoveDatas.Clear();
         }
 
         public bool IsOutOfBoard(int index)

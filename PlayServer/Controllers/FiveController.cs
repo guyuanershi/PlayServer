@@ -18,7 +18,7 @@ namespace PlayServer.Controllers
     {
         private Board BOARD = new Board();
 
-        public void PlayFirst()
+        public List<MoveData> PlayFirst()
         {
             // register first player
             //PlayerManager.RegisterPlayer("http://10.148.204.235/Test1/api/test");
@@ -32,8 +32,11 @@ namespace PlayServer.Controllers
                 nextMove.b_y != 0)
             {
                 // first player lose
-                return;
+                return BOARD.MoveDatas;
             }
+
+            // first move
+            BOARD.Add(nextMove.a_x, nextMove.a_y, PlayerManager.CurrentPlayer.PlayerType);
 
             GameStatus status = GameStatus.Progressing;
             while (true)
@@ -51,21 +54,23 @@ namespace PlayServer.Controllers
             }
 
             // current player lose the game
-            if (status == GameStatus.Break_Rules)
-            {
-                PlayerManager.CurrentPlayer.End("PLAY_END_LOSE");
-                PlayerManager.SwitchPlayer().End("PLAY_END_WIN");
-            }
-            else if (status == GameStatus.Win)
-            {
-                PlayerManager.CurrentPlayer.End("PLAY_END_WIN");
-                PlayerManager.SwitchPlayer().End("PLAY_END_LOSE");
-            }
-            else if (status == GameStatus.Tie)
-            {
-                PlayerManager.CurrentPlayer.End("PLAY_END_TIE");
-                PlayerManager.SwitchPlayer().End("PLAY_END_TIE");
-            }
+            //if (status == GameStatus.Break_Rules)
+            //{
+            //    PlayerManager.CurrentPlayer.End("PLAY_END_LOSE");
+            //    PlayerManager.SwitchPlayer().End("PLAY_END_WIN");
+            //}
+            //else if (status == GameStatus.Win)
+            //{
+            //    PlayerManager.CurrentPlayer.End("PLAY_END_WIN");
+            //    PlayerManager.SwitchPlayer().End("PLAY_END_LOSE");
+            //}
+            //else if (status == GameStatus.Tie)
+            //{
+            //    PlayerManager.CurrentPlayer.End("PLAY_END_TIE");
+            //    PlayerManager.SwitchPlayer().End("PLAY_END_TIE");
+            //}
+
+            return BOARD.MoveDatas;
         }
 
         private Tuple<Point, Point?> ParsePoints(GoData data)
