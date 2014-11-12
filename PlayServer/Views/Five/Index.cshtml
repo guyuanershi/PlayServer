@@ -55,31 +55,42 @@
         for (var i = 0; i < dataJson.length; i++) {
             drawChess(dataJson[i].userType, dataJson[i].x, dataJson[i].y);
         }
+
+        var winner = $("#winner")[0];
+        winner.hidden = false;
     }
 
 
 </script>
 
-<h2>Five</h2>
-<br />
-<canvas width="560" height="560" id="canvas">not support HTML5 canvas</canvas>
+<div class="jumbotron">
+    Five Chess Play
+</div>
 
-@using (Ajax.BeginForm(new AjaxOptions{
-        HttpMethod = "get",
-        InsertionMode = System.Web.Mvc.Ajax.InsertionMode.Replace,
-        UpdateTargetId = "drawing",
-        OnComplete = "draw()"
-}))
-{
-    <input type="submit" value="play first" />
-}
+<div class="row">
+    <div class="col-md-8">
+        <canvas width="560" height="560" id="canvas">not support HTML5 canvas</canvas>
+    </div>
 
-<button onclick="clearBoard()">Clear Board</button>
+    <div class="col-md-4">
+        @using (Ajax.BeginForm(new AjaxOptions
+                {
+                    HttpMethod = "get",
+                    InsertionMode = System.Web.Mvc.Ajax.InsertionMode.Replace,
+                    UpdateTargetId = "drawing",
+                    OnComplete = "draw()"
+                }))
+        {
+            <input type="submit" class="btn btn-primary btn-lg" value="Play" />
+        }
 
-@if (Model != null)
-{
-    @Html.Partial("_Moves", Model)
-}
+        @if (Model != null)
+        {
+            @Html.Partial("_Moves", Model)
+        }
+    </div>
+</div>
+
 
 
 

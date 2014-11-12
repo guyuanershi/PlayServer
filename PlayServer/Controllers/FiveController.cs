@@ -25,11 +25,9 @@ namespace PlayServer.Controllers
             ResultData data = new ResultData();
             data.winner = "";
             data.Data = new List<MoveData>();
-            data.Data.Add(new MoveData { userType = 0, x = 1, y = 2 });
 
             if (Request.IsAjaxRequest())
             {
-                //data = Run();
                 return PartialView("_Moves", Run());
             }
 

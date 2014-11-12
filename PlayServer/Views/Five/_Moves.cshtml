@@ -1,14 +1,15 @@
 ﻿@model PlayServer.Models.ResultData
 
 <div id="drawing">
-    <h2>Winner: @Model.winner</h2>
     @foreach (var item in Model.Data)
     {
+        var ct = (@item.userType == 0) ? "Black" : "White";
         <div>
-            <h4>@item.userType : (@item.x, @item.y)</h4>
+            <h4>@ct : (@item.x, @item.y)</h4>
         </div>
     }
 
+    <h4 id="winner" hidden="hidden">Winner: @Model.winner</h4>
+
     <div id="datavalue" hidden="hidden">@Html.Raw(Json.Encode(@Model.Data))</div>
-    @*<canvas width="640" height="640" id="canvas">not support HTML5 canvas</canvas>*@
 </div>
