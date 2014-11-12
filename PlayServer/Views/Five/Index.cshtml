@@ -1,15 +1,85 @@
-﻿
+﻿@model PlayServer.Models.ResultData
+
 @{
     ViewBag.Title = "Five";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<script type="text/javascript">
+    var canvas;
+    var context;
+    var img_b = new Image();
+    img_b.src = "images/black.png";
+    var img_w = new Image();
+    img_w.src = "images/white.png";
 
-<script type="text/javascript" src="@Url.Content("~/Scripts/jquery-1.10.2.js")"></script>
-<script type="text/javascript" src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.js")"></script>   
+    window.onload = drawBoard;
+
+    function drawBoard() {
+        var length = 560;
+        canvas = document.getElementById("canvas");
+        context = canvas.getContext("2d");
+        for (var i = 0; i <= length; i += 40) {
+            context.beginPath();
+            context.moveTo(0, i);
+            context.lineTo(length, i);
+            context.closePath();
+            context.stroke();
+
+            context.beginPath();
+            context.moveTo(i, 0);
+            context.lineTo(i, length);
+            context.closePath();
+            context.stroke();
+        }
+    }
+
+    function drawChess(type, x, y) {
+        if (type == 0)
+            context.drawImage(img_b, (x - 1) * 40 + 20, (y - 1) * 40 + 20);
+        else
+            context.drawImage(img_w, (x - 1) * 40 + 20, (y - 1) * 40 + 20);
+    }
+
+    function clearBoard()
+    {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        drawBoard();
+    }
+
+    function draw()
+    {
+        clearBoard();
+
+        var data = $("#datavalue")[0].innerHTML;
+        var dataJson = eval(data);
+        for (var i = 0; i < dataJson.length; i++) {
+            drawChess(dataJson[i].userType, dataJson[i].x, dataJson[i].y);
+        }
+    }
+
+
+</script>
 
 <h2>Five</h2>
+<br />
+<canvas width="560" height="560" id="canvas">not support HTML5 canvas</canvas>
 
-@using (Ajax.BeginForm("Play", new AjaxOptions()))
+@using (Ajax.BeginForm(new AjaxOptions{
+        HttpMethod = "get",
+        InsertionMode = System.Web.Mvc.Ajax.InsertionMode.Replace,
+        UpdateTargetId = "drawing",
+        OnComplete = "draw()"
+}))
 {
     <input type="submit" value="play first" />
 }
+
+<button onclick="clearBoard()">Clear Board</button>
+
+@if (Model != null)
+{
+    @Html.Partial("_Moves", Model)
+}
+
+
+

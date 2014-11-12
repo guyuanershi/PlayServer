@@ -22,10 +22,21 @@ namespace PlayServer.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            ResultData data = new ResultData();
+            data.winner = "";
+            data.Data = new List<MoveData>();
+            data.Data.Add(new MoveData { userType = 0, x = 1, y = 2 });
+
+            if (Request.IsAjaxRequest())
+            {
+                //data = Run();
+                return PartialView("_Moves", Run());
+            }
+
+            return View(data);
         }
 
-        public JsonResult Play()
+        private ResultData Run()
         {
             ResultData result = new ResultData();
 
@@ -43,7 +54,7 @@ namespace PlayServer.Controllers
                 result.Data = BOARD.MoveDatas;
                 result.winner = playerManager.SwitchPlayer().Name;
                 // first player lose
-                return Json(result, JsonRequestBehavior.AllowGet);
+                return result;//Json(result, JsonRequestBehavior.AllowGet);
             }
 
             // first move
@@ -82,11 +93,9 @@ namespace PlayServer.Controllers
             //    PlayerManager.SwitchPlayer().End("PLAY_END_TIE");
             //}
 
-
-
             result.Data = BOARD.MoveDatas;
             result.winner = playerManager.SwitchPlayer().Name;
-            return Json(result, JsonRequestBehavior.AllowGet);
+            return result;//Json(result, JsonRequestBehavior.AllowGet);
         }
 
         private Tuple<Point, Point?> ParsePoints(GoData data)

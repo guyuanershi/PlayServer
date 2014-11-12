@@ -1,0 +1,14 @@
+﻿@model PlayServer.Models.ResultData
+
+<div id="drawing">
+    <h2>Winner: @Model.winner</h2>
+    @foreach (var item in Model.Data)
+    {
+        <div>
+            <h4>@item.userType : (@item.x, @item.y)</h4>
+        </div>
+    }
+
+    <div id="datavalue" hidden="hidden">@Html.Raw(Json.Encode(@Model.Data))</div>
+    @*<canvas width="640" height="640" id="canvas">not support HTML5 canvas</canvas>*@
+</div>
