@@ -11,6 +11,8 @@
     img_b.src = "images/black.png";
     var img_w = new Image();
     img_w.src = "images/white.png";
+    var img_bg = new Image();
+    img_bg.src = "images/wood.jpg";
 
     window.onload = drawBoard;
 
@@ -18,6 +20,9 @@
         var length = 560;
         canvas = document.getElementById("canvas");
         context = canvas.getContext("2d");
+        context.drawImage(img_bg, 0, 0, canvas.width, canvas.height);
+
+        context.lineWidth = 2;
         for (var i = 0; i <= length; i += 40) {
             context.beginPath();
             context.moveTo(0, i);
