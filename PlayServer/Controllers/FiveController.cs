@@ -19,30 +19,37 @@ namespace PlayServer.Controllers
     {
         private Board BOARD = new Board();
         private PlayerManager playerManager = new PlayerManager();
+        private PlayServerContext db = new PlayServerContext();
 
-        public ActionResult Index()
+        public ActionResult Index(string PID1, string PID2)
         {
             ResultData data = new ResultData();
             data.winner = "";
             data.Data = new List<MoveData>();
+            
+            var players = db.PlayerDBs.ToArray();
 
             if (Request.IsAjaxRequest())
             {
-                return PartialView("_Moves", Run());
+                var p1 = players.First(p => p.ID == int.Parse(PID1));
+                var p2 = players.First(p => p.ID == int.Parse(PID2));
+                return PartialView("_Moves", Run(p1, p2));
             }
+            
+            ViewData["players"] = new SelectList(players, "ID", "Name");
 
             return View(data);
         }
 
-        private ResultData Run()
+        private ResultData Run(PlayerDB p1, PlayerDB p2)
         {
             ResultData result = new ResultData();
 
             // register first player
             //PlayerManager.RegisterPlayer("http://10.148.204.235/Test1/api/test");
-            playerManager.RegisterPlayer("Robot1", "localhost");
+            playerManager.RegisterPlayer(p1.Name, p1.URL);
             // register second player
-            playerManager.RegisterPlayer("Robot2", "localhost");
+            playerManager.RegisterPlayer(p2.Name, p2.URL);
 
             GoData nextMove = playerManager.CurrentPlayer.Play("PLAY_INVITE");
             if (nextMove == null ||

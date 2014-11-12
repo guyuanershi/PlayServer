@@ -79,15 +79,22 @@
 
     <div class="col-md-4">
         <div class="row">
+            
+        </div>
+
+        <div class="row">
             @using (Ajax.BeginForm(new AjaxOptions
                 {
                     HttpMethod = "get",
                     InsertionMode = System.Web.Mvc.Ajax.InsertionMode.Replace,
                     UpdateTargetId = "drawing",
-                    OnComplete = "draw()"
+                    OnComplete = "draw()",
                 }))
             {
+                @Html.DropDownList("PID1", ViewData["players"] as SelectList, "--Select Player 1--")    
                 
+                @Html.DropDownList("PID2", ViewData["players"] as SelectList, "--Select Player 2--")
+
                 <input type="submit" class="btn btn-primary btn-lg" value="Play" />
             }
 
