@@ -78,21 +78,24 @@
     </div>
 
     <div class="col-md-4">
-        @using (Ajax.BeginForm(new AjaxOptions
+        <div class="row">
+            @using (Ajax.BeginForm(new AjaxOptions
                 {
                     HttpMethod = "get",
                     InsertionMode = System.Web.Mvc.Ajax.InsertionMode.Replace,
                     UpdateTargetId = "drawing",
                     OnComplete = "draw()"
                 }))
-        {
-            <input type="submit" class="btn btn-primary btn-lg" value="Play" />
-        }
+            {
+                
+                <input type="submit" class="btn btn-primary btn-lg" value="Play" />
+            }
 
-        @if (Model != null)
-        {
-            @Html.Partial("_Moves", Model)
-        }
+            @if (Model != null)
+            {
+                @Html.Partial("_Moves", Model)
+            }
+        </div>
     </div>
 </div>
 
