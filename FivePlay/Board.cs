@@ -194,13 +194,19 @@ namespace FivePlay
             return status;
         }
 
+        public bool IsHorizontalWin(int x, int y, ChessType ct)
+        {
+            List<int> indexes;
+            return IsHorizontalWin(x, y, ct, out indexes);
+        }
+
         /// <summary>
         /// * * * * *
         /// </summary>
         /// <returns></returns>
-        public bool IsHorizontalWin(int x, int y, ChessType ct, int len = 5)
+        public bool IsHorizontalWin(int x, int y, ChessType ct, out List<int> indexes, int len = 5)
         {
-            var indexes = new List<int>();
+            indexes = new List<int>();
 
             if (len <= 1) return false;
 
@@ -217,7 +223,7 @@ namespace FivePlay
                     }
                     else
                     {
-                        if (indexes.Count < len)
+                        if (indexes.Count < 5)
                         {
                             indexes.Clear();
                         }
@@ -225,6 +231,13 @@ namespace FivePlay
                 }
             }
             return indexes.Count() >= len;
+        }
+
+
+        public bool IsVerticalWin(int x, int y, ChessType ct)
+        {
+            List<int> indexes;
+            return IsVerticalWin(x, y, ct, out indexes);
         }
 
         /// <summary>
@@ -236,11 +249,11 @@ namespace FivePlay
         /// </summary>
         /// <param name="ct"></param>
         /// <returns></returns>
-        public bool IsVerticalWin(int x, int y, ChessType ct, int len = 5)
+        public bool IsVerticalWin(int x, int y, ChessType ct, out List<int> indexes, int len = 5)
         {
+            indexes = new List<int>();
             if (len <= 1) return false;
 
-            List<int> indexes = new List<int>();
             int step = len - 1;
             for (int i = x - step; i <= x + step; i++)
             {
@@ -254,7 +267,7 @@ namespace FivePlay
                     }
                     else
                     {
-                        if (indexes.Count < len)
+                        if (indexes.Count < 5)
                             indexes.Clear();
                     }
                 }
@@ -262,11 +275,17 @@ namespace FivePlay
             return indexes.Count >= len;
         }
 
-        public bool IsDiagonalFrontWin(int x, int y, ChessType ct, int len = 5)
+        public bool IsDiagonalFrontWin(int x, int y, ChessType ct)
         {
+            List<int> indexes;
+            return IsDiagonalFrontWin(x, y, ct, out indexes);
+        }
+
+        public bool IsDiagonalFrontWin(int x, int y, ChessType ct, out List<int> indexes, int len = 5)
+        {
+            indexes = new List<int>();
             if (len <= 1) return false;
 
-            List<int> indexes = new List<int>();
             int step = len - 1;
             for (int i = x - step, j = y - step; i <= x + step; i++, j++)
             {
@@ -280,7 +299,7 @@ namespace FivePlay
                     }
                     else
                     {
-                        if (indexes.Count < len)
+                        if (indexes.Count < 5)
                             indexes.Clear();
                     }
                 }
@@ -288,11 +307,17 @@ namespace FivePlay
             return indexes.Count >= len;
         }
 
-        public bool IsDiagonalBackWin(int x, int y, ChessType ct, int len = 5)
+        public bool IsDiagonalBackWin(int x, int y, ChessType ct)
         {
+            List<int> indexes;
+            return IsDiagonalBackWin(x, y, ct, out indexes);
+        }
+
+        public bool IsDiagonalBackWin(int x, int y, ChessType ct, out List<int> indexes, int len = 5)
+        {
+            indexes = new List<int>();
             if (len <= 1) return false;
 
-            List<int> indexes = new List<int>();
             int step = len - 1;
             for (int i = x - step, j = y + step; i <= x + step; i++, j--)
             {
@@ -306,7 +331,7 @@ namespace FivePlay
                     }
                     else
                     {
-                        if (indexes.Count < len)
+                        if (indexes.Count < 5)
                             indexes.Clear();
                     }
                 }
@@ -351,7 +376,7 @@ namespace FivePlay
             return index < 0 || index > board.Count();
         }
 
-        private bool IsOutOfBoard(int x, int y)
+        public bool IsOutOfBoard(int x, int y)
         {
             return (x <= 0 || y <= 0 || x > BoardSize || y > BoardSize);
         }

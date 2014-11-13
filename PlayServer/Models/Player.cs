@@ -85,6 +85,14 @@ namespace PlayServer.Models
 
     public class RobotPlayer : Player
     {
+        public enum ConnectionType : uint
+        {
+            Horizontal = 0,
+            Vertical,
+            DiagonalFront,
+            DiagonalBack
+        }
+
         public RobotPlayer(string name, string url, PlayerType playerType)
         {
             this.URL = url;
@@ -113,25 +121,148 @@ namespace PlayServer.Models
         {
             // just test codes
             var nextmove = new GoData();
-            nextmove.a_x = preMove.a_x - 1;
-            nextmove.a_y = preMove.a_y - 1;
-            nextmove.b_x = preMove.b_x + 1;
-            nextmove.b_y = preMove.b_y + 1;
+            //nextmove.a_x = preMove.a_x - 1;
+            //nextmove.a_y = preMove.a_y - 1;
+            //nextmove.b_x = preMove.b_x + 1;
+            //nextmove.b_y = preMove.b_y + 1;
 
-            //// get my moves
-            //var myChessType = GetChessType(PlayerType);
-            //var myMoves = Board.GetChesses(myChessType);
+            // get my moves
+            var myChessType = GetChessType(PlayerType);
+            var oppChessType = GetOpponentChessType(PlayerType);
+            var myMoves = Board.GetChesses(myChessType);
 
-            //// get the opponent's moves
-            //var oppMoves = Board.GetChesses(GetOpponentChessType(PlayerType));
+            // get the opponent's moves
+            var oppMoves = Board.GetChesses(oppChessType);
 
-            //// get empty places
-            //var emptyPlcs = Board.GetChesses(ChessType.EMPTY);
+            // get empty places
+            var emptyPlcs = Board.GetChesses(ChessType.EMPTY);
 
-            //// find opponent's move whether have 3 or move chesses connect together
+            // find opponent's move whether have 3 chesses connect together
+            List<int> indexes;
+            Dictionary<ConnectionType, List<int>> result = new Dictionary<ConnectionType, List<int>>();
+            foreach (var index in oppMoves)
+            {
+                var loc = Board.GetLoaction(index);
+                var x = loc[0];
+                var y = loc[1];
+                if (Board.IsHorizontalWin(x, y, oppChessType, out indexes, 3))
+                {
+                    if (!DuplicatedIndex(index, result))
+                    {
+                        result.Add(ConnectionType.Horizontal, indexes);
+                    }
+                }
+                else if (Board.IsVerticalWin(x, y, oppChessType, out indexes, 3))
+                {
+                    if (!DuplicatedIndex(index, result))
+                    {
+                        result.Add(ConnectionType.Vertical, indexes);
+                    }
+                }
+                else if (Board.IsDiagonalFrontWin(x, y, oppChessType, out indexes, 3))
+                {
+                    if (!DuplicatedIndex(index, result))
+                    {
+                        result.Add(ConnectionType.DiagonalFront, indexes);
+                    }
+                }
+                else if (Board.IsDiagonalBackWin(x, y, oppChessType, out indexes, 3))
+                {
+                    if (!DuplicatedIndex(index, result))
+                    {
+                        result.Add(ConnectionType.DiagonalBack, indexes);
+                    }
+                }
 
+                // only need 2 connections enough
+                if (result.Count >= 2)
+                    break;
+            }
+
+            var allPossibleIndexes = new List<int>();
+            result.ToList().ForEach(c => TryPlaceAChess(c.Key, c.Value.ToArray(), allPossibleIndexes));
+            
+            // if the result have two, then one move to block each other
+            if (allPossibleIndexes.Count() == 4)
+            {
+                allPossibleIndexes = allPossibleIndexes.Intersect(emptyPlcs).ToList();
+            }
+            // if the result have one, then one move to block it, the other try to find a way to win
+            else if (result.Count == 2)
+            {
+                allPossibleIndexes = allPossibleIndexes.Intersect(emptyPlcs).ToList();
+            }
+            // if the result is empty, then try to find a way make win
+            else
+            {
+
+            }
+
+            if (allPossibleIndexes.Count < 2)
+            {
+                for (int i = 0; i <= 2 - allPossibleIndexes.Count; i++)
+                {
+                    var l = emptyPlcs.Except(allPossibleIndexes).ToList();
+                    allPossibleIndexes.Add(emptyPlcs[(new Random()).Next(l.Count)]);
+                }
+            }
+
+            var r1 = Board.GetLoaction(allPossibleIndexes[0]);
+            var r2 = Board.GetLoaction(allPossibleIndexes[1]);
+            nextmove.a_x = r1[0];
+            nextmove.a_y = r1[1];
+            nextmove.b_x = r2[0];
+            nextmove.b_y = r2[1];
 
             return nextmove;
+        }
+
+        private void TryPlaceAChess(ConnectionType conntype, int[] indexes, List<int> allPossibleIndexes)
+        {
+            var first_loc = Board.GetLoaction(indexes.First());
+            var last_loc = Board.GetLoaction(indexes.Last());
+
+            if (conntype == ConnectionType.Horizontal)
+            {
+                // o x x x x
+                GatherPossibleIndex(first_loc[0], first_loc[1] - 1, allPossibleIndexes);
+                // x x x x o
+                GatherPossibleIndex(last_loc[0], last_loc[1] + 1, allPossibleIndexes);
+            }
+            else if (conntype == ConnectionType.Vertical)
+            {
+                GatherPossibleIndex(first_loc[0] - 1, first_loc[1], allPossibleIndexes);
+                GatherPossibleIndex(last_loc[0] + 1, last_loc[1], allPossibleIndexes);
+            }
+            else if (conntype == ConnectionType.DiagonalFront)
+            {
+                GatherPossibleIndex(first_loc[0] - 1, first_loc[1] - 1, allPossibleIndexes);
+                GatherPossibleIndex(last_loc[0] + 1, last_loc[1] + 1, allPossibleIndexes);
+            }
+            else if (conntype == ConnectionType.DiagonalBack)
+            {
+                GatherPossibleIndex(first_loc[0] + 1, first_loc[1] - 1, allPossibleIndexes);
+                GatherPossibleIndex(last_loc[0] - 1, last_loc[1] + 1, allPossibleIndexes);
+            }
+        }
+
+        private void GatherPossibleIndex(int x, int y, List<int> ls)
+        {
+            if (!Board.IsOutOfBoard(x, y))
+                ls.Add(Board.GetBoardIndex(x, y));
+        }
+
+
+        private bool DuplicatedIndex(int index, Dictionary<ConnectionType, List<int>> result)
+        {
+            foreach (var ls in result.Values)
+            {
+                var pt = Board.GetLoaction(index);
+                if (ls.Contains(index))
+                    return true;
+               
+            }
+            return false;
         }
 
         private ChessType GetChessType(PlayerType pt)
