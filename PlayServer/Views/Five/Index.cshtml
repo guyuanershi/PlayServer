@@ -57,12 +57,34 @@
 
         var data = $("#datavalue")[0].innerHTML;
         var dataJson = eval(data);
-        for (var i = 0; i < dataJson.length; i++) {
-            drawChess(dataJson[i].userType, dataJson[i].x, dataJson[i].y);
+
+        if (dataJson.length == 0) {
+            alert("Please select players!");
+            return
         }
 
-        var winner = $("#winner")[0];
-        winner.hidden = false;
+        var movesH4 = $("h4[class=m]");
+
+        var i = 0;
+        drawChess(dataJson[i].userType, dataJson[i].x, dataJson[i].y);
+        // show move
+        unhide(movesH4[i]);
+
+        var timer = setInterval(function () {
+            if (++i >= dataJson.length) {
+                // show winner
+                unhide($("#winner")[0]);
+                clearInterval(timer);
+            } else {
+                drawChess(dataJson[i].userType, dataJson[i].x, dataJson[i].y);
+                // show move
+                unhide(movesH4[i]);
+            }
+        }, 800);
+    }
+
+    function unhide(c) {
+        c.hidden = false;
     }
 
 

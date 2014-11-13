@@ -28,15 +28,18 @@ namespace PlayServer.Controllers
             data.Data = new List<MoveData>();
             
             var players = db.PlayerDBs.ToArray();
+            ViewData["players"] = new SelectList(players, "ID", "Name");
 
             if (Request.IsAjaxRequest())
             {
-                var p1 = players.First(p => p.ID == int.Parse(PID1));
-                var p2 = players.First(p => p.ID == int.Parse(PID2));
-                return PartialView("_Moves", Run(p1, p2));
+                if (!string.IsNullOrEmpty(PID1) && !string.IsNullOrEmpty(PID2))
+                {
+                    var p1 = players.First(p => p.ID == int.Parse(PID1));
+                    var p2 = players.First(p => p.ID == int.Parse(PID2));
+                    data = Run(p1, p2);
+                }
+                return PartialView("_Moves", data);
             }
-            
-            ViewData["players"] = new SelectList(players, "ID", "Name");
 
             return View(data);
         }
