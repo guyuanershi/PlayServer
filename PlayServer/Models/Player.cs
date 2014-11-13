@@ -181,7 +181,8 @@ namespace PlayServer.Models
 
             var allPossibleIndexes = new List<int>();
             result.ToList().ForEach(c => TryPlaceAChess(c.Key, c.Value.ToArray(), allPossibleIndexes));
-            
+
+            allPossibleIndexes = allPossibleIndexes.Intersect(emptyPlcs).ToList();
             // if the result have two, then one move to block each other
             if (allPossibleIndexes.Count() == 4)
             {
