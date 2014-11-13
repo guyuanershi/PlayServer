@@ -198,10 +198,14 @@ namespace FivePlay
         /// * * * * *
         /// </summary>
         /// <returns></returns>
-        public bool IsHorizontalWin(int x, int y, ChessType ct)
+        public bool IsHorizontalWin(int x, int y, ChessType ct, int len = 5)
         {
-            List<int> indexes = new List<int>();
-            for (int i = y - 4; i <= y + 4; i++)
+            var indexes = new List<int>();
+
+            if (len <= 1) return false;
+
+            int step = len - 1;
+            for (int i = y - step; i <= y + step; i++)
             {
                 if (!IsOutOfBoard(x, i))
                 {
@@ -213,14 +217,14 @@ namespace FivePlay
                     }
                     else
                     {
-                        if (indexes.Count < 5)
+                        if (indexes.Count < len)
                         {
                             indexes.Clear();
                         }
                     }
                 }
             }
-            return indexes.Count() >= 5;
+            return indexes.Count() >= len;
         }
 
         /// <summary>
@@ -232,10 +236,13 @@ namespace FivePlay
         /// </summary>
         /// <param name="ct"></param>
         /// <returns></returns>
-        public bool IsVerticalWin(int x, int y, ChessType ct)
+        public bool IsVerticalWin(int x, int y, ChessType ct, int len = 5)
         {
+            if (len <= 1) return false;
+
             List<int> indexes = new List<int>();
-            for (int i = x - 4; i <= x + 4; i++)
+            int step = len - 1;
+            for (int i = x - step; i <= x + step; i++)
             {
                 if (!IsOutOfBoard(i, y))
                 {
@@ -247,18 +254,21 @@ namespace FivePlay
                     }
                     else
                     {
-                        if (indexes.Count < 5)
+                        if (indexes.Count < len)
                             indexes.Clear();
                     }
                 }
             }
-            return indexes.Count >= 5;
+            return indexes.Count >= len;
         }
 
-        public bool IsDiagonalFrontWin(int x, int y, ChessType ct)
+        public bool IsDiagonalFrontWin(int x, int y, ChessType ct, int len = 5)
         {
+            if (len <= 1) return false;
+
             List<int> indexes = new List<int>();
-            for (int i = x - 4, j = y - 4; i <= x + 4; i++, j++)
+            int step = len - 1;
+            for (int i = x - step, j = y - step; i <= x + step; i++, j++)
             {
                 if (!IsOutOfBoard(i, j))
                 {
@@ -270,18 +280,21 @@ namespace FivePlay
                     }
                     else
                     {
-                        if (indexes.Count < 5)
+                        if (indexes.Count < len)
                             indexes.Clear();
                     }
                 }
             }
-            return indexes.Count >= 5;
+            return indexes.Count >= len;
         }
 
-        public bool IsDiagonalBackWin(int x, int y, ChessType ct)
+        public bool IsDiagonalBackWin(int x, int y, ChessType ct, int len = 5)
         {
+            if (len <= 1) return false;
+
             List<int> indexes = new List<int>();
-            for (int i = x - 4, j = y + 4; i <= x + 4; i++, j--)
+            int step = len - 1;
+            for (int i = x - step, j = y + step; i <= x + step; i++, j--)
             {
                 if (!IsOutOfBoard(i, j))
                 {
@@ -293,12 +306,12 @@ namespace FivePlay
                     }
                     else
                     {
-                        if (indexes.Count < 5)
+                        if (indexes.Count < len)
                             indexes.Clear();
                     }
                 }
             }
-            return indexes.Count >= 5;
+            return indexes.Count >= len;
         }
 
         /// <summary>

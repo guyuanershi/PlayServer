@@ -54,6 +54,9 @@ namespace PlayServer.Controllers
             // register second player
             playerManager.RegisterPlayer(p2.Name, p2.URL);
 
+            // set current board to player if the player is rebot
+            playerManager.SetBoardToRobotPlayer(BOARD);
+
             GoData nextMove = playerManager.CurrentPlayer.Play("PLAY_INVITE");
             if (nextMove == null ||
                 nextMove.b_x != 0 ||
@@ -62,7 +65,7 @@ namespace PlayServer.Controllers
                 result.Data = BOARD.MoveDatas;
                 result.winner = playerManager.SwitchPlayer().Name;
                 // first player lose
-                return result;//Json(result, JsonRequestBehavior.AllowGet);
+                return result;
             }
 
             // first move
@@ -103,7 +106,7 @@ namespace PlayServer.Controllers
 
             result.Data = BOARD.MoveDatas;
             result.winner = playerManager.SwitchPlayer().Name;
-            return result;//Json(result, JsonRequestBehavior.AllowGet);
+            return result;
         }
 
         private Tuple<Point, Point?> ParsePoints(GoData data)

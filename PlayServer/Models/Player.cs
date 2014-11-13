@@ -117,8 +117,35 @@ namespace PlayServer.Models
             nextmove.a_y = preMove.a_y - 1;
             nextmove.b_x = preMove.b_x + 1;
             nextmove.b_y = preMove.b_y + 1;
+
+            //// get my moves
+            //var myChessType = GetChessType(PlayerType);
+            //var myMoves = Board.GetChesses(myChessType);
+
+            //// get the opponent's moves
+            //var oppMoves = Board.GetChesses(GetOpponentChessType(PlayerType));
+
+            //// get empty places
+            //var emptyPlcs = Board.GetChesses(ChessType.EMPTY);
+
+            //// find opponent's move whether have 3 or move chesses connect together
+
+
             return nextmove;
         }
+
+        private ChessType GetChessType(PlayerType pt)
+        {
+            return (pt == FivePlay.PlayerType.FirstOne) ? ChessType.BLACK : ChessType.WHITE;
+        }
+
+        private ChessType GetOpponentChessType(PlayerType pt)
+        {
+            return (pt == FivePlay.PlayerType.FirstOne) ? ChessType.WHITE : ChessType.BLACK;
+        }
+
+        public Board Board { get;  set; }
+
     }
 
     public class PlayerManager
@@ -156,5 +183,20 @@ namespace PlayServer.Models
             return CurrentPlayer;
         }
 
+        public void SetBoardToRobotPlayer(Board board)
+        {
+            var robotPlayer = _firstPlayer as RobotPlayer;
+            if (robotPlayer != null)
+            {
+                robotPlayer.Board = board;
+            }
+
+            robotPlayer = _secondPlayer as RobotPlayer;
+            if (robotPlayer != null)
+            {
+                robotPlayer.Board = board;
+            }
+
+        }
     }
 }
