@@ -13,26 +13,30 @@
     img_w.src = "images/white.png";
     var img_bg = new Image();
     img_bg.src = "images/wood.jpg";
+    
+    //var c_length = img_b.width;
 
     window.onload = drawBoard;
 
     function drawBoard() {
-        var length = 560;
+        var length = 504;
+        var step = 18;
         canvas = document.getElementById("canvas");
         context = canvas.getContext("2d");
-        context.drawImage(img_bg, 0, 0, canvas.width, canvas.height);
+        // draw wood background
+        context.drawImage(img_bg, 0, 0, length + 36, length + 36);
 
         context.lineWidth = 2;
-        for (var i = 0; i <= length; i += 40) {
+        for (var i = 0; i <= length; i += 36) {
             context.beginPath();
-            context.moveTo(0, i);
-            context.lineTo(length, i);
+            context.moveTo(step, i + step);
+            context.lineTo(length + step, i + step);
             context.closePath();
             context.stroke();
 
             context.beginPath();
-            context.moveTo(i, 0);
-            context.lineTo(i, length);
+            context.moveTo(i + step, step);
+            context.lineTo(i + step, length + step);
             context.closePath();
             context.stroke();
         }
@@ -40,9 +44,9 @@
 
     function drawChess(type, x, y) {
         if (type == 0)
-            context.drawImage(img_b, (x - 1) * 40 + 20, (y - 1) * 40 + 20);
+            context.drawImage(img_b, (x - 1) * 36, (y - 1) * 36);
         else
-            context.drawImage(img_w, (x - 1) * 40 + 20, (y - 1) * 40 + 20);
+            context.drawImage(img_w, (x - 1) * 36, (y - 1) * 36);
     }
 
     function clearBoard()
@@ -93,11 +97,11 @@
 </div>
 
 <div class="row">
-    <div class="col-md-6">
-        <canvas width="560" height="560" id="canvas">not support HTML5 canvas</canvas>
+    <div class="col-md-7">
+        <canvas width="600" height="600" id="canvas">not support HTML5 canvas</canvas>
     </div>
 
-    <div class="col-md-6" style="padding:10px, 5px, 5px, 50px">
+    <div class="col-md-5" style="padding:10px, 5px, 5px, 50px">
         <div class="row">
             @using (Ajax.BeginForm(new AjaxOptions
                 {

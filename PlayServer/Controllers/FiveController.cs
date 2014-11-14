@@ -75,16 +75,26 @@ namespace PlayServer.Controllers
             GameStatus status = GameStatus.Progressing;
             while (true)
             {
-                nextMove = playerManager.SwitchPlayer().Play("PLAY_NORMAL", nextMove);
-
-                points = ParsePoints(nextMove);
-                status = BOARD.Add(points.Item1, points.Item2, playerManager.CurrentPlayer.PlayerType);
-                if (status == GameStatus.Break_Rules ||
-                    status == GameStatus.Win ||
-                    status == GameStatus.Tie)
+                try
                 {
-                    break;
+                    nextMove = playerManager.SwitchPlayer().Play("PLAY_NORMAL", nextMove);
+
+                    points = ParsePoints(nextMove);
+                    status = BOARD.Add(points.Item1, points.Item2, playerManager.CurrentPlayer.PlayerType);
+                    if (status == GameStatus.Break_Rules ||
+                        status == GameStatus.Win ||
+                        status == GameStatus.Tie)
+                    {
+                        break;
+                    }
                 }
+                catch (OutOfBoardException)
+                {
+                    result.Data = BOARD.MoveDatas;
+                    result.winner = playerManager.SwitchPlayer().Name;
+                    return result;
+                }
+
             }
 
             // current player lose the game

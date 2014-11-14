@@ -53,11 +53,16 @@
     <Compile Include="BoardTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleTest.cs" />
+    <Compile Include="PlayerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FivePlay\FivePlay.csproj">
       <Project>{a7f71a2b-e104-403d-9de3-0d3506cb2928}</Project>
       <Name>FivePlay</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PlayServer\PlayServer.csproj">
+      <Project>{0c02ada2-792d-4c5b-bc51-5af408178300}</Project>
+      <Name>PlayServer</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

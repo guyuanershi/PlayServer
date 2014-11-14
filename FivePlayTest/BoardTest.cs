@@ -199,5 +199,27 @@ namespace FivePlayTest
             res = board.IsDiagonalBackWin(5, 7, ChessType.BLACK);
             Assert.AreEqual(res, true);
         }
+
+        [TestMethod]
+        public void Test_Chess_Arround()
+        {
+            board.CleanBoard();
+            board.Add(5, 5, PlayerType.FirstOne);
+
+            var plcs = board.GetEmptyPlacesArround(5, 5);
+            Assert.AreEqual(plcs.Length, 8);
+
+            board.Add(6, 6, PlayerType.FirstOne);
+            plcs = board.GetEmptyPlacesArround(5, 5);
+            Assert.AreEqual(plcs.Length, 7);
+
+            board.Add(5, 4, PlayerType.SecondOne);
+            plcs = board.GetEmptyPlacesArround(5, 5);
+            Assert.AreEqual(plcs.Length, 6);
+
+            board.Add(1, 1, PlayerType.FirstOne);
+            plcs = board.GetEmptyPlacesArround(5, 5);
+            Assert.AreEqual(plcs.Length, 6);
+        }
     }
 }
